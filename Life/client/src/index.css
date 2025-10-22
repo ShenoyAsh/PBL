@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Apply a soft background gradient to the whole app */
+body {
+  @apply bg-gradient-to-br from-white to-light-green/30 min-h-screen;
+}
