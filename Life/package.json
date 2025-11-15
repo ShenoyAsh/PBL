@@ -1,0 +1,12 @@
+{
+  "name": "life",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
