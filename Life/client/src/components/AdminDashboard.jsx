@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import api, { createAdminApi } from '../services/api';
 import { User, UserCheck, Stethoscope, Download, Upload, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import BloodBankModal from './BloodBankModal';
+import { Link } from "react-router-dom";
 
 // A simple tabs component
 const Tabs = ({ activeTab, setActiveTab }) => {
@@ -120,8 +121,19 @@ export default function AdminDashboard() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="flex items-center justify-between">
+  <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+
+  <Link
+    to="/admin/emergency-dashboard"
+    className="text-sm font-medium text-gray-600 hover:text-primary-green"
+  >
+    Emergency Dashboard
+  </Link>
+</div>
+
+<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+
       
       {isLoading && <Loader2 className="mt-8 h-8 w-8 animate-spin text-primary-green" />}
 

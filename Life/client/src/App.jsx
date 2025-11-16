@@ -4,9 +4,10 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
 import RegisterDonor from './components/RegisterDonor';
-import RegisterPatient from './components/RegisterPatient';
 import AdminDashboard from './components/AdminDashboard';
 import FindMatch from './components/FindMatch';
+import EmergencyRequestForm from './components/EmergencyRequestForm';
+import EmergencyDashboard from './components/EmergencyDashboard';
 
 function HomePage() {
   return (
@@ -25,9 +26,10 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register-donor" element={<RegisterDonor />} />
-          <Route path="/register-patient" element={<RegisterPatient />} />
+          <Route path="/emergency-request" element={<EmergencyRequestForm />} />
           <Route path="/find-match" element={<FindMatch />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/emergency-dashboard" element={<EmergencyDashboard />} />
         </Routes>
       </main>
     </div>

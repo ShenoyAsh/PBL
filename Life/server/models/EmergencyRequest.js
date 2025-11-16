@@ -27,11 +27,6 @@ const emergencyRequestSchema = new mongoose.Schema({
     required: true,
     enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
   },
-  organNeeded: {
-    type: String,
-    enum: ['None', 'Kidney', 'Liver', 'Heart'],
-    default: 'None',
-  },
   urgency: {
     type: String,
     enum: ['Critical', 'High', 'Medium', 'Low'],

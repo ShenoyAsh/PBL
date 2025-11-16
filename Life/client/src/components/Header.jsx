@@ -18,12 +18,7 @@ export default function Header() {
             <Link to="/admin" className="text-sm font-medium text-gray-600 hover:text-primary-green">
               Admin
             </Link>
-            <Link
-              to="/register-patient"
-              className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700"
-            >
-              Need Blood
-            </Link>
+            <Link to="/emergency-request" className="rounded-md bg-red-600 ...">Need Blood</Link>
             <Link
               to="/register-donor"
               className="rounded-md bg-primary-green px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-dark-green"
