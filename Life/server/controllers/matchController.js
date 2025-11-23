@@ -80,8 +80,6 @@ const findMatch = async (req, res) => {
           availability: 1,
           distanceKm: { $divide: ['$distanceMeters', 1000] }, // Convert to KM
           // Exclude sensitive fields
-          otp: 0,
-          otpExpires: 0,
         },
       },
     ]);
