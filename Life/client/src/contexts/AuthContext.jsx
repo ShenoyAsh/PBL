@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api'; // Changed: Import configured api instance
 
 const AuthContext = createContext();
 
@@ -14,9 +14,10 @@ export const AuthProvider = ({ children }) => {
   // Set auth token in axios headers
   const setAuthToken = (token) => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Changed: Set header on the api instance
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      delete api.defaults.headers.common['Authorization'];
     }
   };
 
@@ -24,7 +25,8 @@ export const AuthProvider = ({ children }) => {
   const loadUser = async () => {
     try {
       setAuthToken(token);
-      const res = await axios.get('/api/me');
+      // Changed: Use api.get and remove '/api' prefix (it's in baseURL)
+      const res = await api.get('/me');
       setUser(res.data);
     } catch (err) {
       console.error('Error loading user', err);
@@ -38,13 +40,19 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     try {
       setError(null);
-      const res = await axios.post('/api/register', formData);
-      const { token, ...userData } = res.data;
+      // Changed: Use api.post and remove '/api' prefix
+      const res = await api.post('/register', formData);
+      const {QB, ...userData } = res.data; // Note: res.data structure depends on backend. Assuming standard here.
+      // Actually, your backend sends { _id, name, email, role, token }
+      // We should extract token and user data correctly.
+      
+      // Based on your authController.js:
+      const { token, ...user } = res.data;
       
       localStorage.setItem('token', token);
       setToken(token);
       setAuthToken(token);
-      setUser(userData);
+      setUser(user);
       
       return { success: true };
     } catch (err) {
@@ -57,7 +65,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (formData) => {
     try {
       setError(null);
-      const res = await axios.post('/api/login', formData);
+      // Changed: Use api.post and remove '/api' prefix
+      const res = await api.post('/login', formData);
       const { token, ...userData } = res.data;
       
       localStorage.setItem('token', token);

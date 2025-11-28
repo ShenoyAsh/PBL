@@ -35,11 +35,10 @@ export default function Header() {
               Find a Match
             </Link>
             
-            {isAuthenticated && user?.role === 'admin' && (
               <Link to="/admin" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
                 Admin
               </Link>
-            )}
+            
             
             <Link 
               to="/emergency-request" 
