@@ -2,7 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Apply a soft background gradient to the whole app */
-body {
-  @apply bg-gradient-to-br from-white to-light-green/30 min-h-screen;
+@layer base {
+  body {
+    /* Subtle mesh gradient background */
+    @apply bg-[#f8fafc] text-gray-800 antialiased;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(150,30%,96%,1) 0, transparent 50%), 
+      radial-gradient(at 100% 100%, hsla(0,50%,97%,1) 0, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+/* Smooth scrolling for the whole HTML page */
+html {
+  scroll-behavior: smooth;
 }

@@ -6,16 +6,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary-green': '#16A34A', // Main green
-        'light-green': '#D1FAE5', // Light green for backgrounds
-        'dark-green': '#15803D',
+        // Refined Green Palette (Calming, Trustworthy)
+        'primary-green': '#10B981', // Emerald 500
+        'dark-green': '#047857',    // Emerald 700
+        'light-green': '#D1FAE5',   // Emerald 100
+        'accent-red': '#EF4444',    // Red 500 (for emergency/heartbeat)
       },
       fontFamily: {
-        // Add 'Inter' as the default sans-serif font
         sans: ['Inter', 'sans-serif'],
-        // Add 'Great Vibes' for the cursive logo
         cursive: ['"Great Vibes"', 'cursive'],
       },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        }
+      }
     },
   },
   plugins: [

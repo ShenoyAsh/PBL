@@ -3,35 +3,61 @@ import { motion } from 'framer-motion';
 
 export default function Hero() {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-light-green/50 to-white pt-16 pb-24">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="relative isolate overflow-hidden bg-white pt-14 pb-16 sm:pb-24">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 -z-10 h-full w-full">
+        <img 
+          src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2070" 
+          alt="Medical Team" 
+          className="h-full w-full object-cover object-center opacity-10"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/50 to-white"></div>
+      </div>
+
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center"
         >
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            <span className="font-cursive text-7xl text-primary-green">LifeLink</span>:
-            <span className="ml-3">A Digital Lifeline</span>
+          <div className="mb-6 inline-flex items-center rounded-full border border-primary-green/20 bg-light-green/50 px-3 py-1 text-sm text-dark-green backdrop-blur-sm">
+            <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-primary-green"></span>
+            Connecting Donors & Patients in Real-Time
+          </div>
+          
+          <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-7xl mb-6">
+            <span className="font-cursive text-primary-green">LifeLink</span>
+            <br />
+            <span className="text-4xl sm:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+               A Digital Lifeline
+            </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-gray-600">
-            LifeLink represents an impactful approach to emergency medical donations—transforming how we connect willing donors with patients in their most critical moments. Our comprehensive digital platform eliminates the chaos of traditional donor searching.
+          
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600">
+            We bridge the critical gap between emergency patients and willing blood donors. 
+            Our platform uses geolocation to find the nearest help when seconds count.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
+          
+          <motion.div 
+            className="mt-10 flex items-center justify-center gap-x-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
             <a
               href="/register-donor"
-              className="rounded-md bg-primary-green px-5 py-3 text-base font-semibold text-white shadow-lg transition duration-200 hover:bg-dark-green hover:shadow-xl"
+              className="rounded-full bg-primary-green px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-green-200 transition-all hover:scale-105 hover:bg-dark-green hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
             >
-              Register as a Donor
+              Become a Donor
             </a>
             <a
               href="/find-match"
-              className="text-base font-semibold leading-6 text-gray-900 transition duration-200 hover:text-gray-700"
+              className="text-base font-semibold leading-6 text-gray-900 transition-colors hover:text-primary-green flex items-center gap-2"
             >
               Find a Match <span aria-hidden="true">→</span>
             </a>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>

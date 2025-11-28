@@ -19,16 +19,19 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 shadow-sm backdrop-blur-md">
+  <header className="sticky top-0 z-50 w-full border-b border-gray-200/50 bg-white/70 backdrop-blur-md transition-all duration-300">
       <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <Droplet className="h-8 w-8 text-primary-green" />
-              <span className="font-cursive text-4xl text-primary-green">LifeLink</span>
+            <Link to="/" className="flex items-center gap-2 group">
+              {/* Animated Icon on Hover */}
+              <div className="rounded-full bg-light-green p-2 transition-transform duration-300 group-hover:scale-110">
+                <Droplet className="h-6 w-6 text-primary-green" />
+              </div>
+              <span className="font-cursive text-4xl text-gray-800">LifeLink</span>
             </Link>
           </div>
-
+          
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
             <Link to="/find-match" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
