@@ -39,7 +39,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'user', // Use provided role or default
+      role: role === 'admin' ? 'admin' : (role || 'user'), // Preserve admin role if provided
     });
 
     if (user) {

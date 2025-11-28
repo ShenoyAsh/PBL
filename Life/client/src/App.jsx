@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/auth/PrivateRoute';
+import { Bell } from 'lucide-react';
+
+// Auth Components
 import Login from './components/auth/Login';
 import ResetPassword from './components/auth/ResetPassword';
 import Register from './components/auth/Register';
+
+// Public Components
 import Header from './components/Header';
 import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
+
+// Legacy Components (to be migrated to new dashboard structure)
 import RegisterDonor from './components/RegisterDonor';
 import AdminDashboard from './components/AdminDashboard';
 import HospitalDashboard from './components/HospitalDashboard';
@@ -15,7 +22,14 @@ import FindMatch from './components/FindMatch';
 import EmergencyRequestForm from './components/EmergencyRequestForm';
 import EmergencyDashboard from './components/EmergencyDashboard';
 import ChatBot from './components/ChatBot';
-import { Bell } from 'lucide-react';
+
+// New Dashboard Components
+import DashboardLayout from './components/dashboard/DashboardLayout';
+import Overview from './components/dashboard/Overview';
+import FindDonors from './components/dashboard/FindDonors';
+import BloodBank from './components/dashboard/BloodBank';
+import CreateRequest from './components/dashboard/CreateRequest';
+import EmergencyRequests from './components/dashboard/EmergencyRequests';
 
 function HomePage() {
   return (
@@ -46,6 +60,17 @@ function App() {
 
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
+              {/* New Dashboard Structure */}
+              <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<Navigate to="overview" replace />} />
+                <Route path="overview" element={<Overview />} />
+                <Route path="emergency-requests" element={<EmergencyRequests />} />
+                <Route path="find-donors" element={<FindDonors />} />
+                <Route path="create-request" element={<CreateRequest />} />
+                <Route path="blood-bank" element={<BloodBank />} />
+              </Route>
+
+              {/* Legacy Routes (Kept for backward compatibility) */}
               <Route path="/register-donor" element={<RegisterDonor />} />
               <Route path="/emergency-request" element={<EmergencyRequestForm />} />
               <Route path="/find-match" element={<FindMatch />} />
