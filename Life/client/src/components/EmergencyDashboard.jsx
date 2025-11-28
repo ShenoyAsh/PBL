@@ -6,6 +6,11 @@ import { Loader2 } from 'lucide-react';
 export default function EmergencyDashboard() {
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+    const [fadeIn, setFadeIn] = useState(false);
+
+    useEffect(() => {
+      setFadeIn(true);
+    }, []);
   const [filters, setFilters] = useState({
     bloodType: '',
     urgency: '',
@@ -73,7 +78,34 @@ export default function EmergencyDashboard() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className={`container mx-auto max-w-5xl px-4 py-12 transition-opacity duration-1000 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Hero Section with image and animation */}
+      <div className="flex flex-col items-center mb-8 animate-slide-in">
+        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80" alt="Emergency Dashboard" className="rounded-xl shadow-lg w-full max-w-2xl mb-4" style={{animation: 'pulse 2s infinite'}} />
+        <h1 className="text-4xl font-bold text-red-600 mb-2 animate-fade-in">Emergency Requests</h1>
+        <p className="text-lg text-gray-600 animate-fade-in">Track and manage urgent blood requests in real time.</p>
+      </div>
+      <style>{`
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+          70% { box-shadow: 0 0 20px 10px rgba(239,68,68,0.2); }
+          100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+        }
+        .animate-slide-in {
+          animation: slide-in 1s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes slide-in {
+          0% { transform: translateY(-40px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fade-in 1.2s ease;
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+      `}</style>
       <h1 className="text-3xl font-bold tracking-tight text-gray-900">Emergency Dashboard (Admin)</h1>
 
       <div className="mt-6 flex gap-4">

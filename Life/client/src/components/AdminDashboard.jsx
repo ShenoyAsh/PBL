@@ -34,6 +34,12 @@ const Tabs = ({ activeTab, setActiveTab }) => {
 };
 
 export default function AdminDashboard() {
+    // Animation state for fade-in
+    const [fadeIn, setFadeIn] = useState(false);
+
+    useEffect(() => {
+      setFadeIn(true);
+    }, []);
   const [activeTab, setActiveTab] = useState('Donors');
   const [donors, setDonors] = useState([]);
   const [patients, setPatients] = useState([]);
@@ -120,7 +126,34 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className={`container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 transition-opacity duration-1000 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Hero Section with image and animation */}
+      <div className="flex flex-col items-center mb-8 animate-slide-in">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="LifeLink Dashboard" className="rounded-xl shadow-lg w-full max-w-2xl mb-4" style={{animation: 'pulse 2s infinite'}} />
+        <h1 className="text-4xl font-bold text-primary-green mb-2 animate-fade-in">LifeLink Admin Dashboard</h1>
+        <p className="text-lg text-gray-600 animate-fade-in">Manage donors, patients, and emergency requests with ease.</p>
+      </div>
+      <style>{`
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+          70% { box-shadow: 0 0 20px 10px rgba(34,197,94,0.2); }
+          100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+        }
+        .animate-slide-in {
+          animation: slide-in 1s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes slide-in {
+          0% { transform: translateY(-40px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-fade-in {
+          animation: fade-in 1.2s ease;
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+      `}</style>
       <div className="flex items-center justify-between">
   <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
 

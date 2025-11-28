@@ -1,5 +1,9 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import PrivateRoute from './components/auth/PrivateRoute';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
@@ -20,19 +24,31 @@ function HomePage() {
 
 function App() {
   return (
-    <div className="App min-h-screen font-sans text-gray-800">
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/register-donor" element={<RegisterDonor />} />
-          <Route path="/emergency-request" element={<EmergencyRequestForm />} />
-          <Route path="/find-match" element={<FindMatch />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/emergency-dashboard" element={<EmergencyDashboard />} />
-        </Routes>
-      </main>
-    </div>
+    <AuthProvider>
+      <div className="App min-h-screen font-sans text-gray-800">
+        <Header />
+        <main>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Protected Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/register-donor" element={<RegisterDonor />} />
+              <Route path="/emergency-request" element={<EmergencyRequestForm />} />
+              <Route path="/find-match" element={<FindMatch />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/emergency-dashboard" element={<EmergencyDashboard />} />
+            </Route>
+
+            {/* Catch all other routes */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
+    </AuthProvider>
   );
 }
 

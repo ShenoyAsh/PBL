@@ -1,13 +1,23 @@
 const express = require('express');
-const { registerDonor, verifyDonorOTP } = require('../controllers/authController');
 const router = express.Router();
+const { protect } = require('../middleware/authMiddleware');
+const { 
+  registerUser, 
+  loginUser, 
+  getMe,
+  registerDonor, 
+  verifyDonorOTP 
+} = require('../controllers/authController');
 
-// @route   POST /api/register-donor
-// @desc    Register a new donor, send OTP, and sync to Excel+Mongo
-router.post('/register-donor', registerDonor);
+// Public routes
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 
-// @route   POST /api/verify-donor/:id
-// @desc    Verify a donor's OTP
-router.post('/verify-donor/:id', verifyDonorOTP);
+// Protected routes (require authentication)
+router.get('/me', protect, getMe);
+
+// Donor registration routes
+router.post('/register-donor', protect, registerDonor);
+router.post('/verify-donor-otp/:id', protect, verifyDonorOTP);
 
 module.exports = router;
