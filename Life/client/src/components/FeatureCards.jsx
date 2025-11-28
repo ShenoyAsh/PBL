@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Zap, ShieldCheck } from 'lucide-react';
+import { MapPin, Zap, ShieldCheck, Brain } from 'lucide-react';
 
 const features = [
   {
@@ -20,6 +20,12 @@ const features = [
     description: 'Every donor is verified via OTP and admin checks to ensure a safe, reliable, and secure network of willing participants.',
     icon: ShieldCheck,
     color: 'bg-green-100 text-green-600',
+  },
+  {
+    name: 'AI-Powered Insights',
+    description: 'Utilizing Gemini AI to classify emergency urgency and analyze donor feedback, ensuring smarter and faster decision making.',
+    icon: Brain,
+    color: 'bg-purple-100 text-purple-600',
   },
 ];
 
@@ -45,7 +51,7 @@ export default function FeatureCards() {
     <div className="py-24 sm:py-32 bg-red-10">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div 
-          className="grid grid-cols-1 gap-8 md:grid-cols-3"
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4" // Updated grid for 4 items
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"

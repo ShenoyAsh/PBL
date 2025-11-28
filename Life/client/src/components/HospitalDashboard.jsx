@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { User, AlertCircle, HeartPulse, MapPin, Users, Droplet, CheckCircle, XCircle } from 'lucide-react';
+import { User, AlertCircle, MapPin, Users, Droplet, CheckCircle, XCircle } from 'lucide-react';
 import api from '../services/api';
+
+// Import the existing dashboard components
+import Overview from './dashboard/Overview';
+import EmergencyRequests from './dashboard/EmergencyRequests';
+import FindDonors from './dashboard/FindDonors';
+import CreateRequest from './dashboard/CreateRequest';
+import BloodBank from './dashboard/BloodBank';
 
 const TABS = [
   { name: 'Overview' },
@@ -11,8 +18,6 @@ const TABS = [
 ];
 
 const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-
-const emerald = 'bg-emerald-500 text-white';
 
 function getBloodTypeColor(count) {
   if (count === 0) return 'bg-red-100 text-red-600 border-red-400';
@@ -52,16 +57,13 @@ export default function HospitalDashboard() {
         const pending = requestsData.filter(r => r.status === 'Pending').length;
         const donorsAvailable = donorsData.filter(d => d.availability && d.verified).length;
         const patients = requestsData.map(r => r.patientId?._id).filter(Boolean).length;
-        // Nearby requests: for demo, just count all requests (replace with location logic if needed)
         const nearby = requestsData.length;
 
-        // Blood type counts
         const bloodTypeCounts = BLOOD_TYPES.reduce((acc, type) => {
           acc[type] = donorsData.filter(d => d.bloodType === type && d.availability && d.verified).length;
           return acc;
         }, {});
 
-        // Recent requests (last 5)
         const recentRequests = requestsData
           .sort((a, b) => new Date(b.timePosted) - new Date(a.timePosted))
           .slice(0, 5);
@@ -77,34 +79,21 @@ export default function HospitalDashboard() {
         setDonors(donorsData);
         setRequests(requestsData);
       } catch (err) {
-        // Handle error
+        console.error("Failed to fetch dashboard data", err);
       }
       setLoading(false);
     }
-    fetchData();
-  }, []);
+    
+    // Only fetch data if we are on the Overview tab to save resources
+    if (activeTab === 'Overview') {
+      fetchData();
+    }
+  }, [activeTab]);
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Nav Tabs */}
-      <nav className="flex space-x-2 border-b bg-white px-8 pt-6 pb-2">
-        {TABS.map(tab => (
-          <button
-            key={tab.name}
-            onClick={() => setActiveTab(tab.name)}
-            className={`px-4 py-2 rounded-t-lg font-medium transition-colors duration-200 ${
-              activeTab === tab.name
-                ? 'bg-emerald-500 text-white shadow'
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            {tab.name}
-          </button>
-        ))}
-      </nav>
-
-      <div className="p-8">
-        {activeTab === 'Overview' && (
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'Overview':
+        return (
           <>
             {/* Stats Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -210,14 +199,41 @@ export default function HospitalDashboard() {
               </div>
             </div>
           </>
-        )}
+        );
+      case 'Emergency Requests':
+        return <EmergencyRequests />;
+      case 'Find Donors':
+        return <FindDonors />;
+      case 'Create Request':
+        return <CreateRequest />;
+      case 'Blood Bank':
+        return <BloodBank />;
+      default:
+        return null;
+    }
+  };
 
-        {/* Other tabs can be implemented as needed */}
-        {activeTab !== 'Overview' && (
-          <div className="bg-white rounded-lg shadow-sm p-8 mt-8 text-gray-500 text-center">
-            <span className="text-emerald-500 font-semibold">{activeTab}</span> content coming soon.
-          </div>
-        )}
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Nav Tabs */}
+      <nav className="flex space-x-2 border-b bg-white px-8 pt-6 pb-2 overflow-x-auto">
+        {TABS.map(tab => (
+          <button
+            key={tab.name}
+            onClick={() => setActiveTab(tab.name)}
+            className={`px-4 py-2 rounded-t-lg font-medium transition-colors duration-200 whitespace-nowrap ${
+              activeTab === tab.name
+                ? 'bg-emerald-500 text-white shadow'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            {tab.name}
+          </button>
+        ))}
+      </nav>
+
+      <div className="p-8">
+        {renderContent()}
       </div>
     </div>
   );
