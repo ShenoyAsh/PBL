@@ -1,24 +1,29 @@
-// utils/geminiHelper.js
-// Gemini 2.5 Flash API integration
-const axios = require('axios');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+// Fetch API Key from environment variables
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  console.error("❌ GEMINI_API_KEY is missing in environment variables.");
+}
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 async function geminiRequest(prompt) {
   try {
-    const res = await axios.post(
-      `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
-      {
-        contents: [{ parts: [{ text: prompt }] }]
-      },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    // Extract response text
-    const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!apiKey) {
+      console.error("Gemini request aborted: No API Key.");
+      return null;
+    }
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
     return text;
   } catch (error) {
-    console.error('Gemini API error:', error.response?.data || error.message);
+    console.error("Gemini AI Error:", error);
     return null;
   }
 }

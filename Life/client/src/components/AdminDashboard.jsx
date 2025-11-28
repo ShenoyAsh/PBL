@@ -132,13 +132,40 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className={`container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 ${fadeIn ? 'animate-fade-in' : ''}`}>
-      {/* Hero Section with image and animation */}
-      <div className="flex flex-col items-center mb-8 animate-slide-in">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="LifeLink Dashboard" className="rounded-xl shadow-lg w-full max-w-2xl mb-4" style={{animation: 'pulse 2s infinite'}} />
-        <h1 className="text-4xl font-bold text-primary-green mb-2 animate-fade-in">LifeLink Admin Dashboard</h1>
-        <p className="text-lg text-gray-600 animate-fade-in">Manage donors, patients, and emergency requests with ease.</p>
+    <div className={`container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8`}>
+      {/* Hero Section with animated background image and transitions */}
+      <div
+        className="relative flex flex-col items-center justify-center mb-8 rounded-xl shadow-lg w-full max-w-2xl overflow-hidden hero-bg"
+        style={{ minHeight: '260px' }}
+      >
+        <div className="absolute inset-0 w-full h-full bg-cover bg-center animate-bg-zoom" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80)', zIndex: 0 }} />
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+          <h1 className="text-4xl font-bold text-primary-green mb-2 animate-fade-in">LifeLink Admin Dashboard</h1>
+          <p className="text-lg text-gray-600 animate-fade-in">Manage donors, patients, and emergency requests with ease.</p>
+        </div>
       </div>
+      <style>{`
+        @keyframes bg-zoom {
+          0% { transform: scale(1) translateY(0); opacity: 0.8; }
+          50% { transform: scale(1.08) translateY(-10px); opacity: 1; }
+          100% { transform: scale(1) translateY(0); opacity: 0.8; }
+        }
+        .animate-bg-zoom {
+          animation: bg-zoom 8s infinite alternate;
+          transition: opacity 0.8s, transform 0.8s;
+        }
+        .hero-bg:hover .animate-bg-zoom {
+          opacity: 1;
+          transform: scale(1.12);
+        }
+        .animate-fade-in {
+          animation: fade-in 1.2s ease;
+        }
+        @keyframes fade-in {
+          0% { opacity: 0; transform: scale(0.98); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
       <style>{`
         @keyframes pulse {
           0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }

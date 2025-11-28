@@ -28,10 +28,10 @@ export default function Header() {
               <div className="rounded-full bg-light-green p-2 transition-transform duration-300 group-hover:scale-110">
                 <Droplet className="h-6 w-6 text-primary-green" />
               </div>
-              <span className="font-cursive text-4xl text-gray-800">LifeLink</span>
+              <span className="font-cursive text-4xl text-green-500">LifeLink</span>
             </Link>
           </div>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
             <Link to="/find-match" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">

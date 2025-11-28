@@ -9,7 +9,7 @@ const fs = require('fs');
 
 const allRoutes = require('./routes');
 const { connectDB } = require('./utils/db');
-
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 // --- Initialization ---
 const app = express();
 connectDB();
