@@ -48,32 +48,50 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create a new account
-          </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-100 via-white to-red-200 relative overflow-hidden">
+      {/* Animated blood donation background */}
+      <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80" alt="Blood Donation" className="absolute inset-0 w-full h-full object-cover opacity-30 animate-bg-fade" style={{zIndex:0}} />
+      <style>{`
+        @keyframes bg-fade {
+          0% { opacity: 0.2; }
+          50% { opacity: 0.35; }
+          100% { opacity: 0.2; }
+        }
+        .animate-bg-fade {
+          animation: bg-fade 8s infinite alternate;
+        }
+      `}</style>
+      <div className="max-w-md w-full space-y-8 bg-white bg-opacity-90 rounded-xl shadow-2xl p-8 flex flex-col items-center z-10 animate-slide-in">
+        <style>{`
+          @keyframes slide-in {
+            0% { transform: translateY(40px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+          }
+          .animate-slide-in {
+            animation: slide-in 1.2s cubic-bezier(0.4,0,0.2,1);
+          }
+        `}</style>
+        <div className="flex flex-col items-center">
+          <img src="https://cdn-icons-png.flaticon.com/512/2966/2966483.png" alt="Blood Drop" className="w-16 h-16 mb-2 animate-bounce" />
+          <h2 className="mt-2 text-center text-3xl font-extrabold text-red-700 drop-shadow-lg">Create a LifeLink Account</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
             <Link
               to="/login"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className="font-medium text-red-600 hover:text-red-500 transition-colors duration-200"
             >
               sign in to your account
             </Link>
           </p>
         </div>
-        
         {(error || formError) && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative animate-pulse" role="alert">
             <span className="block sm:inline">{error || formError}</span>
           </div>
         )}
-
         <form className="mt-8 space-y-6" onSubmit={onSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+            <div className="transition-transform duration-300 hover:scale-105">
               <label htmlFor="name" className="sr-only">
                 Full Name
               </label>
@@ -82,13 +100,13 @@ const Register = () => {
                 name="name"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm transition-all duration-200"
                 placeholder="Full Name"
                 value={name}
                 onChange={onChange}
               />
             </div>
-            <div>
+            <div className="transition-transform duration-300 hover:scale-105">
               <label htmlFor="email" className="sr-only">
                 Email address
               </label>
@@ -98,13 +116,13 @@ const Register = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm transition-all duration-200"
                 placeholder="Email address"
                 value={email}
                 onChange={onChange}
               />
             </div>
-            <div>
+            <div className="transition-transform duration-300 hover:scale-105">
               <label htmlFor="password" className="sr-only">
                 Password
               </label>
@@ -113,13 +131,13 @@ const Register = () => {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm transition-all duration-200"
                 placeholder="Password (min 6 characters)"
                 value={password}
                 onChange={onChange}
               />
             </div>
-            <div>
+            <div className="transition-transform duration-300 hover:scale-105">
               <label htmlFor="confirmPassword" className="sr-only">
                 Confirm Password
               </label>
@@ -128,19 +146,18 @@ const Register = () => {
                 name="confirmPassword"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm transition-all duration-200"
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={onChange}
               />
             </div>
           </div>
-
           <div>
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 transition-all duration-200 shadow-lg"
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
