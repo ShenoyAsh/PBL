@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Droplet, User, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from "../contexts/AuthContext";
 
-
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -37,6 +36,8 @@ export default function Header() {
             <Link to="/find-match" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
               Find a Match
             </Link>
+            
+            {/* ONLY show Admin links if user is admin */}
             {isAuthenticated && user?.role === 'admin' && (
               <>
                 <Link to="/admin" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
@@ -47,6 +48,7 @@ export default function Header() {
                 </Link>
               </>
             )}
+            
             <Link 
               to="/emergency-request" 
               className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 transition-colors"

@@ -68,7 +68,7 @@ function App() {
         </button>
         {showChatBot && (
           <div className="fixed bottom-24 right-8 z-50 w-96 max-w-full">
-            <ChatBot onClose={() => setShowChatBot(false)} />
+            <ChatBot />
           </div>
         )}
         {/* Notification Bell */}

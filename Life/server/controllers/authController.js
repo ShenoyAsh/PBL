@@ -1,55 +1,12 @@
-// @desc    Request password reset
-// @route   POST /api/auth/request-password-reset
-// @access  Public
-const { sendPasswordResetEmail } = require('../utils/emailHelper');
-const crypto = require('crypto');
-
-const requestPasswordReset = async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email required' });
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'No user found with that email' });
-    // Generate token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 1000 * 60 * 30; // 30 min
-    await user.save();
-    await sendPasswordResetEmail(user.email, resetToken);
-    res.json({ message: 'Password reset link sent to email' });
-  } catch (error) {
-    console.error('Password reset request error:', error);
-    res.status(500).json({ message: 'Server error during password reset request' });
-  }
-};
-
-// @desc    Reset password
-// @route   POST /api/auth/reset-password
-// @access  Public
-const resetPassword = async (req, res) => {
-  const { token, password } = req.body;
-  if (!token || !password) return res.status(400).json({ message: 'Token and new password required' });
-  try {
-    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
-    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
-    user.password = password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-    res.json({ message: 'Password reset successful' });
-  } catch (error) {
-    console.error('Password reset error:', error);
-    res.status(500).json({ message: 'Server error during password reset' });
-  }
-};
 const User = require('../models/User');
 const Donor = require('../models/Donor');
 const { validatePhone, validateEmail } = require('../utils/validate');
 const { generateOTP, getOTPExpiry } = require('../utils/otpHelper');
-const { sendOTPEmail } = require('../utils/emailHelper');
+const { sendOTPEmail, sendPasswordResetEmail } = require('../utils/emailHelper');
 const { appendDonorToExcel } = require('../utils/excelHelper');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -62,7 +19,8 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  // FIX: Extract role from body
+  const { name, email, password, role } = req.body;
 
   // Validation
   if (!name || !email || !password) {
@@ -76,11 +34,12 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create user
+    // Create user with the specific role
     const user = await User.create({
       name,
       email,
       password,
+      role: role || 'user', // Use provided role or default
     });
 
     if (user) {
@@ -165,7 +124,6 @@ const registerDonor = async (req, res) => {
     // --- 2. OTP Generation ---
     const otp = generateOTP();
     const otpExpires = getOTPExpiry();
-    // const hashedOTP = await bcrypt.hash(otp, 10); // Use this for production
 
     // --- 3. Create Donor in MongoDB ---
     const newDonor = new Donor({
@@ -179,14 +137,13 @@ const registerDonor = async (req, res) => {
         name: locationName,
       },
       availability: availability ?? true,
-      otp: otp, // Store plain OTP for prototype. Use hashedOTP in production.
+      otp: otp, 
       otpExpires,
     });
     
     await newDonor.save();
 
     // --- 4. Sync to Excel (Atomic Append) ---
-    // This happens *after* successful Mongo save
     appendDonorToExcel(newDonor);
 
     // --- 5. Send OTP Email ---
@@ -228,34 +185,22 @@ const verifyDonorOTP = async (req, res) => {
       return res.status(400).json({ message: 'Donor already verified' });
     }
 
-    // Check OTP expiry
     if (donor.otpExpires < new Date()) {
       return res.status(400).json({ message: 'OTP has expired' });
     }
 
-    // --- OTP Verification ---
-    // Plain text check (prototype)
     const isMatch = donor.otp === otp;
-    
-    // Hashed check (production)
-    // const isMatch = await bcrypt.compare(otp, donor.otp);
 
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    // --- Success ---
     donor.otpVerified = true;
-    donor.verified = true; // Auto-verify on OTP success for this flow
-    donor.otp = undefined; // Clear OTP
+    donor.verified = true; 
+    donor.otp = undefined; 
     donor.otpExpires = undefined;
     
     await donor.save();
-
-    // TODO: We should also update the "verified" status in the Excel file.
-    // This requires a read-modify-write operation on the Excel file,
-    // which is more complex than simple appends.
-    // For now, Mongo is the source of truth for verification status.
 
     res.status(200).json({ message: 'Donor verified successfully' });
 
@@ -275,6 +220,44 @@ const getMe = async (req, res) => {
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Request password reset
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email required' });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'No user found with that email' });
+    
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 1000 * 60 * 30; 
+    await user.save();
+    await sendPasswordResetEmail(user.email, resetToken);
+    res.json({ message: 'Password reset link sent to email' });
+  } catch (error) {
+    console.error('Password reset request error:', error);
+    res.status(500).json({ message: 'Server error during password reset request' });
+  }
+};
+
+// @desc    Reset password
+const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ message: 'Token and new password required' });
+  try {
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Password reset error:', error);
+    res.status(500).json({ message: 'Server error during password reset' });
   }
 };
 
