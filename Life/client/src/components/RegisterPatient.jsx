@@ -4,9 +4,13 @@ import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import OCRUpload from './OCRUpload';
+import TextClassificationResult from './TextClassificationResult';
 
 export default function EmergencyRequestForm() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -142,23 +146,22 @@ export default function EmergencyRequestForm() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-gray-900/5">
-        <h2 className="text-3xl font-bold tracking-tight text-red-600">Request Emergency Blood</h2>
-        <p className="mt-2 text-gray-600">Submit this form to create a patient record and an emergency request immediately.</p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="rounded-2xl bg-white p-8 shadow-2xl ring-1 ring-gray-900/5"
+      >
+        <h2 className="text-3xl font-bold tracking-tight text-red-600">Request Emergency Help</h2>
+        <p className="mt-2 text-gray-600">Register a patient to find compatible donors nearby.</p>
 
-        {/* OCR Medical Report Upload */}
-        <div className="mb-6 p-4 rounded-lg bg-gray-50 border border-gray-200">
-          <h3 className="text-lg font-semibold mb-2">Upload Medical Report (OCR)</h3>
-          <input type="file" accept="image/*,.pdf" onChange={handleOcrFileChange} />
-          <button type="button" onClick={handleOcrUpload} className="ml-2 px-4 py-2 bg-primary-green text-white rounded-md">Extract Info</button>
-          {ocrResult && (
-            <div className="mt-2 text-sm text-blue-700">
-              <div><strong>Blood Group:</strong> {ocrResult.bloodGroup || 'N/A'}</div>
-              <div><strong>Age:</strong> {ocrResult.age || 'N/A'}</div>
-              <div><strong>Health Conditions:</strong> {ocrResult.healthConditions?.join(', ') || 'N/A'}</div>
-            </div>
-          )}
-        </div>
+        {/* Role-based features for Patient and Admin */}
+        {(user?.role === 'patient' || user?.role === 'admin') && (
+          <div className="space-y-4 mb-6">
+            <OCRUpload />
+            <TextClassificationResult label="Emergency" />
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">

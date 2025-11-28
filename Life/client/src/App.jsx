@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/auth/PrivateRoute';
@@ -13,6 +13,8 @@ import AdminDashboard from './components/AdminDashboard';
 import FindMatch from './components/FindMatch';
 import EmergencyRequestForm from './components/EmergencyRequestForm';
 import EmergencyDashboard from './components/EmergencyDashboard';
+import ChatBot from './components/ChatBot';
+import { Bell } from 'lucide-react';
 
 function HomePage() {
   return (
@@ -24,9 +26,12 @@ function HomePage() {
 }
 
 function App() {
+  const [showChatBot, setShowChatBot] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
   return (
     <AuthProvider>
-      <div className="App min-h-screen font-sans text-gray-800">
+      <div className="App min-h-screen font-sans text-gray-800 relative">
         <Header />
         <main>
           <Routes>
@@ -51,6 +56,37 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+        {/* Floating ChatBot Button */}
+        <button
+          onClick={() => setShowChatBot((v) => !v)}
+          className="fixed bottom-8 right-8 z-50 rounded-full bg-primary-green p-4 shadow-lg hover:bg-dark-green"
+          aria-label="Open ChatBot"
+        >
+          <span className="font-bold text-white">💬</span>
+        </button>
+        {showChatBot && (
+          <div className="fixed bottom-24 right-8 z-50 w-96 max-w-full">
+            <ChatBot onClose={() => setShowChatBot(false)} />
+          </div>
+        )}
+        {/* Notification Bell */}
+        <button
+          onClick={() => setShowNotifications((v) => !v)}
+          className="fixed top-8 right-8 z-50 rounded-full bg-white p-3 shadow-lg border border-gray-200 hover:bg-gray-100"
+          aria-label="Notifications"
+        >
+          <Bell className="h-6 w-6 text-primary-green" />
+        </button>
+        {showNotifications && (
+          <div className="fixed top-20 right-8 z-50 w-80 max-w-full bg-white rounded-lg shadow-xl border border-gray-200 p-4">
+            <h3 className="text-lg font-semibold mb-2">Notifications</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>No new notifications.</li>
+              {/* TODO: Connect to backend for real notifications */}
+            </ul>
+            <button className="mt-4 text-xs text-primary-green hover:underline" onClick={() => setShowNotifications(false)}>Close</button>
+          </div>
+        )}
       </div>
     </AuthProvider>
   );

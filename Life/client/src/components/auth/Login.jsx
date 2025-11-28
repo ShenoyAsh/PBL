@@ -7,6 +7,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    role: 'donor',
   });
   
   const { login, error } = useAuth();
@@ -16,7 +17,7 @@ const Login = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetStatus, setResetStatus] = useState('');
 
-  const { email, password } = formData;
+  const { email, password, role } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,7 +27,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     
-    const { success } = await login({ email, password });
+    const { success } = await login({ email, password, role });
     
     if (success) {
       navigate('/');
@@ -79,6 +80,20 @@ const Login = () => {
               </div>
             )}
             <form className="mt-8 space-y-6" onSubmit={onSubmit}>
+                        <div>
+                          <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+                          <select
+                            name="role"
+                            value={role}
+                            onChange={onChange}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-green focus:ring-primary-green"
+                            required
+                          >
+                            <option value="donor">Donor</option>
+                            <option value="patient">Patient</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </div>
               <div className="rounded-md shadow-sm -space-y-px">
                 <div className="transition-transform duration-300 hover:scale-105">
                   <label htmlFor="email" className="sr-only">

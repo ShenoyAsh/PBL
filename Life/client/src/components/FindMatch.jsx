@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 import api from '../services/api';
 import { Loader2, Send, MapPin, Phone, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext';
+import SmartSearchBar from './SmartSearchBar';
 
 export default function FindMatch() {
   const [patients, setPatients] = useState([]);
@@ -15,6 +17,7 @@ export default function FindMatch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const { user } = useAuth();
 
   // Fetch patients on mount
   useEffect(() => {
@@ -87,6 +90,10 @@ export default function FindMatch() {
   return (
     <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-gray-900">Find a Match</h1>
+      {/* Role-based Smart Search for Patient and Admin */}
+      {(user?.role === 'patient' || user?.role === 'admin') && (
+        <SmartSearchBar onSearch={(term) => setSearchTerm(term)} />
+      )}
       
       {/* Search Form with Smart Search & Auto-Suggest */}
       <form onSubmit={handleFindMatch} className="mt-8 rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/5">

@@ -4,6 +4,8 @@ import api, { createAdminApi } from '../services/api';
 import { User, UserCheck, Stethoscope, Download, Upload, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import BloodBankModal from './BloodBankModal';
 import { Link } from "react-router-dom";
+import { useAuth } from '../contexts/AuthContext';
+import SentimentAnalysisResult from './SentimentAnalysisResult';
 
 // A simple tabs component
 const Tabs = ({ activeTab, setActiveTab }) => {
@@ -48,6 +50,7 @@ export default function AdminDashboard() {
   // Sentiment analysis states
   const [feedbackText, setFeedbackText] = useState('');
   const [sentimentResult, setSentimentResult] = useState(null);
+  const { user } = useAuth();
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -129,7 +132,7 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className={`container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 transition-opacity duration-1000 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 ${fadeIn ? 'animate-fade-in' : ''}`}>
       {/* Hero Section with image and animation */}
       <div className="flex flex-col items-center mb-8 animate-slide-in">
         <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="LifeLink Dashboard" className="rounded-xl shadow-lg w-full max-w-2xl mb-4" style={{animation: 'pulse 2s infinite'}} />
@@ -314,6 +317,13 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {/* Role-based Sentiment Analysis for Admin */}
+      {user?.role === 'admin' && (
+        <div className="my-8">
+          <SentimentAnalysisResult sentiment="Positive" />
+        </div>
+      )}
 
       <BloodBankModal isOpen={isBankModalOpen} onClose={() => setIsBankModalOpen(false)} />
     </div>

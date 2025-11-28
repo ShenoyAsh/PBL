@@ -8,6 +8,7 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'donor',
   });
   
   const { register, error } = useAuth();
@@ -15,7 +16,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState('');
 
-  const { name, email, password, confirmPassword } = formData;
+  const { name, email, password, confirmPassword, role } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,7 +39,7 @@ const Register = () => {
     setLoading(true);
     setFormError('');
     
-    const { success } = await register({ name, email, password });
+    const { success } = await register({ name, email, password, role });
     
     if (success) {
       navigate('/');
@@ -132,7 +133,7 @@ const Register = () => {
                 type="password"
                 required
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm transition-all duration-200"
-                placeholder="Password (min 6 characters)"
+                placeholder="Password"
                 value={password}
                 onChange={onChange}
               />
@@ -151,6 +152,21 @@ const Register = () => {
                 value={confirmPassword}
                 onChange={onChange}
               />
+            </div>
+            <div className="transition-transform duration-300 hover:scale-105">
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <select
+                id="role"
+                name="role"
+                value={role}
+                onChange={onChange}
+                required
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm transition-all duration-200"
+              >
+                <option value="donor">Donor</option>
+                <option value="patient">Patient</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
           </div>
           <div>

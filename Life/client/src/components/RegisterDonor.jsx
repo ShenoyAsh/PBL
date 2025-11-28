@@ -4,6 +4,10 @@ import { toast } from 'react-toastify';
 import { Loader2 } from 'lucide-react';
 import api from '../services/api';
 import OTPModal from './OTPModal'; // We will create this next
+import { useAuth } from '../contexts/AuthContext';
+import RiskScoreCard from './RiskScoreCard';
+import FakeDetectionStatus from './FakeDetectionStatus';
+import EligibilityCheck from './EligibilityCheck';
 
 
 export default function RegisterDonor() {
@@ -33,6 +37,7 @@ export default function RegisterDonor() {
   });
 
   const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const { user } = useAuth();
 
   const validate = () => {
     let tempErrors = {};
@@ -153,6 +158,14 @@ export default function RegisterDonor() {
         >
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">Become a Donor</h2>
           <p className="mt-2 text-gray-600">Join our network and save lives. Fill out the form below to get started.</p>
+          {/* Role-based features for Donor and Admin */}
+          {(user?.role === 'donor' || user?.role === 'admin') && (
+            <div className="space-y-4 mb-6">
+              <RiskScoreCard score={85} />
+              <FakeDetectionStatus status="Genuine" />
+              <EligibilityCheck eligible={true} reason="All criteria met." />
+            </div>
+          )}
           
           {/* Eligibility Check Section */}
           <div className="mb-8 p-4 rounded-lg bg-gray-50 border border-gray-200">
