@@ -6,12 +6,16 @@ const {
   loginUser, 
   getMe,
   registerDonor, 
-  verifyDonorOTP 
+  verifyDonorOTP,
+  requestPasswordReset,
+  resetPassword
 } = require('../controllers/authController');
 
 // Public routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.post('/request-password-reset', requestPasswordReset);
+router.post('/reset-password', resetPassword);
 
 // Protected routes (require authentication)
 router.get('/me', protect, getMe);

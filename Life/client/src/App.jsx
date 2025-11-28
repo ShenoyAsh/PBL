@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Login from './components/auth/Login';
+import ResetPassword from './components/auth/ResetPassword';
 import Register from './components/auth/Register';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -33,6 +34,9 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+
+            {/* Password Reset Route */}
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>

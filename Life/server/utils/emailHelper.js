@@ -1,3 +1,29 @@
+/**
+ * Sends a password reset email to user.
+ */
+const sendPasswordResetEmail = async (email, token) => {
+  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'LifeLink Password Reset',
+    text: `You requested a password reset. Click the link below to reset your password:\n${resetUrl}\nIf you did not request this, please ignore this email.`,
+    html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2>Password Reset Request</h2>
+      <p>Click the link below to reset your password:</p>
+      <a href="${resetUrl}" style="color: #e11d48; font-size: 18px;">Reset Password</a>
+      <p>If you did not request this, please ignore this email.</p>
+    </div>`,
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Password reset email sent to ${email}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to send password reset email to ${email}:`, error);
+    return false;
+  }
+};
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -82,4 +108,5 @@ const sendAlertEmail = async (donor, patient) => {
 module.exports = {
   sendOTPEmail,
   sendAlertEmail,
+  sendPasswordResetEmail,
 };

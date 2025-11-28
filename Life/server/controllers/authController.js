@@ -1,3 +1,47 @@
+// @desc    Request password reset
+// @route   POST /api/auth/request-password-reset
+// @access  Public
+const { sendPasswordResetEmail } = require('../utils/emailHelper');
+const crypto = require('crypto');
+
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email required' });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'No user found with that email' });
+    // Generate token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 1000 * 60 * 30; // 30 min
+    await user.save();
+    await sendPasswordResetEmail(user.email, resetToken);
+    res.json({ message: 'Password reset link sent to email' });
+  } catch (error) {
+    console.error('Password reset request error:', error);
+    res.status(500).json({ message: 'Server error during password reset request' });
+  }
+};
+
+// @desc    Reset password
+// @route   POST /api/auth/reset-password
+// @access  Public
+const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ message: 'Token and new password required' });
+  try {
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Password reset error:', error);
+    res.status(500).json({ message: 'Server error during password reset' });
+  }
+};
 const User = require('../models/User');
 const Donor = require('../models/Donor');
 const { validatePhone, validateEmail } = require('../utils/validate');
@@ -240,4 +284,6 @@ module.exports = {
   getMe,
   registerDonor,
   verifyDonorOTP,
+  requestPasswordReset,
+  resetPassword,
 };
