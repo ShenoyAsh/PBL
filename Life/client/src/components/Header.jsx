@@ -37,12 +37,16 @@ export default function Header() {
             <Link to="/find-match" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
               Find a Match
             </Link>
-            
-              <Link to="/admin" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
-                Admin
-              </Link>
-            
-            
+            {isAuthenticated && user?.role === 'admin' && (
+              <>
+                <Link to="/admin" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
+                  Admin
+                </Link>
+                <Link to="/admin/hospital-dashboard" className="text-sm font-medium text-gray-600 hover:text-primary-green transition-colors">
+                  Hospital Dashboard
+                </Link>
+              </>
+            )}
             <Link 
               to="/emergency-request" 
               className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 transition-colors"
@@ -115,13 +119,22 @@ export default function Header() {
               </Link>
               
               {isAuthenticated && user?.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-green"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Admin
-                </Link>
+                <>
+                  <Link
+                    to="/admin"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-green"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                  <Link
+                    to="/admin/hospital-dashboard"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-green"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Hospital Dashboard
+                  </Link>
+                </>
               )}
               
               <Link

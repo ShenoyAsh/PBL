@@ -10,6 +10,7 @@ import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
 import RegisterDonor from './components/RegisterDonor';
 import AdminDashboard from './components/AdminDashboard';
+import HospitalDashboard from './components/HospitalDashboard';
 import FindMatch from './components/FindMatch';
 import EmergencyRequestForm from './components/EmergencyRequestForm';
 import EmergencyDashboard from './components/EmergencyDashboard';
@@ -50,6 +51,7 @@ function App() {
               <Route path="/find-match" element={<FindMatch />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/emergency-dashboard" element={<EmergencyDashboard />} />
+              <Route path="/admin/hospital-dashboard" element={<HospitalDashboard />} />
             </Route>
 
             {/* Catch all other routes */}
