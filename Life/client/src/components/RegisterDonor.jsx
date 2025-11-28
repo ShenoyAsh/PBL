@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react';
 import api from '../services/api';
 import OTPModal from './OTPModal'; // We will create this next
 
+
 export default function RegisterDonor() {
   const [formData, setFormData] = useState({
     name: '',
@@ -21,6 +22,16 @@ export default function RegisterDonor() {
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [donorId, setDonorId] = useState(null);
 
+  // Eligibility check states
+  const [eligibility, setEligibility] = useState(null);
+  const [eligibilityAnswers, setEligibilityAnswers] = useState({
+    age: '',
+    weight: '',
+    health: '',
+    lastDonation: '',
+    hemoglobin: '',
+  });
+
   const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
   const validate = () => {
@@ -33,7 +44,6 @@ export default function RegisterDonor() {
     if (!formData.locationName) tempErrors.locationName = 'Location name is required';
     if (!formData.lat) tempErrors.lat = 'Latitude is required';
     if (!formData.lng) tempErrors.lng = 'Longitude is required';
-    
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
@@ -44,6 +54,34 @@ export default function RegisterDonor() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
+  };
+
+  const handleEligibilityChange = (e) => {
+    const { name, value } = e.target;
+    setEligibilityAnswers((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const checkEligibility = () => {
+    const { age, weight, health, lastDonation, hemoglobin } = eligibilityAnswers;
+    let result = '';
+    if (!age || !weight || !health || !lastDonation || !hemoglobin) {
+      setEligibility('Please answer all eligibility questions.');
+      return;
+    }
+    if (parseInt(age) < 18 || parseInt(age) > 65) {
+      result = 'You are not eligible due to age.';
+    } else if (parseInt(weight) < 50) {
+      result = 'You are not eligible due to weight.';
+    } else if (/anemia|hypertension|diabetes|heart|cancer/i.test(health)) {
+      result = 'You are not eligible due to health condition.';
+    } else if (parseInt(lastDonation) < 90) {
+      result = `You must wait ${90 - parseInt(lastDonation)} more days before donating again.`;
+    } else if (parseFloat(hemoglobin) < 12.5) {
+      result = 'Your hemoglobin is low — please check again.';
+    } else {
+      result = 'You are eligible to donate!';
+    }
+    setEligibility(result);
   };
 
   const handleGetLocation = () => {
@@ -76,7 +114,10 @@ export default function RegisterDonor() {
       toast.error('Please fix the errors in the form');
       return;
     }
-
+    if (!eligibility || eligibility !== 'You are eligible to donate!') {
+      toast.error('Please complete eligibility check and ensure you are eligible.');
+      return;
+    }
     setIsLoading(true);
     try {
       const res = await api.post('/register-donor', formData);
@@ -93,11 +134,12 @@ export default function RegisterDonor() {
   const onOTPSuccess = () => {
     setShowOTPModal(false);
     setDonorId(null);
-    // Reset form or redirect
-     setFormData({
-        name: '', email: '', phone: '', bloodType: 'A+',
-        locationName: '', lat: '', lng: '', availability: true,
-     });
+    setFormData({
+      name: '', email: '', phone: '', bloodType: 'A+',
+      locationName: '', lat: '', lng: '', availability: true,
+    });
+    setEligibilityAnswers({ age: '', weight: '', health: '', lastDonation: '', hemoglobin: '' });
+    setEligibility(null);
   }
 
   return (
@@ -112,6 +154,35 @@ export default function RegisterDonor() {
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">Become a Donor</h2>
           <p className="mt-2 text-gray-600">Join our network and save lives. Fill out the form below to get started.</p>
           
+          {/* Eligibility Check Section */}
+          <div className="mb-8 p-4 rounded-lg bg-gray-50 border border-gray-200">
+            <h3 className="text-lg font-semibold mb-2">Eligibility Check</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Age</label>
+                <input type="number" name="age" min="0" max="100" value={eligibilityAnswers.age} onChange={handleEligibilityChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Weight (kg)</label>
+                <input type="number" name="weight" min="0" max="200" value={eligibilityAnswers.weight} onChange={handleEligibilityChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Health Conditions (e.g., anemia, hypertension)</label>
+                <input type="text" name="health" value={eligibilityAnswers.health} onChange={handleEligibilityChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Days Since Last Donation</label>
+                <input type="number" name="lastDonation" min="0" max="365" value={eligibilityAnswers.lastDonation} onChange={handleEligibilityChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Hemoglobin (g/dL)</label>
+                <input type="number" name="hemoglobin" step="0.1" min="0" max="20" value={eligibilityAnswers.hemoglobin} onChange={handleEligibilityChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+              </div>
+            </div>
+            <button type="button" onClick={checkEligibility} className="mt-4 px-4 py-2 bg-primary-green text-white rounded-md">Check Eligibility</button>
+            {eligibility && <p className="mt-2 text-sm text-blue-700 font-semibold">{eligibility}</p>}
+          </div>
+
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               {/* Form fields */}

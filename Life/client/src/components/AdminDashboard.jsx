@@ -45,6 +45,9 @@ export default function AdminDashboard() {
   const [patients, setPatients] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  // Sentiment analysis states
+  const [feedbackText, setFeedbackText] = useState('');
+  const [sentimentResult, setSentimentResult] = useState(null);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -245,38 +248,70 @@ export default function AdminDashboard() {
 
         {/* Data & Tools Tab */}
         {activeTab === 'Data & Tools' && (
-            <div className="space-y-8 rounded-lg bg-white p-8 shadow ring-1 ring-gray-900/5">
-                <div>
-                    <h3 className="text-lg font-medium text-gray-900">Excel Data Management</h3>
-                    <p className="mt-1 text-sm text-gray-500">Import or export the entire database (Donors & Patients) as an Excel file. Requires Admin API Key.</p>
-                    <div className="mt-4 flex gap-4">
-                        <button
-                            onClick={handleExport}
-                            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-                        >
-                            <Download className="h-4 w-4" /> Export to Excel
-                        </button>
+          <div className="space-y-8 rounded-lg bg-white p-8 shadow ring-1 ring-gray-900/5">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">Excel Data Management</h3>
+              <p className="mt-1 text-sm text-gray-500">Import or export the entire database (Donors & Patients) as an Excel file. Requires Admin API Key.</p>
+              <div className="mt-4 flex gap-4">
+                <button
+                  onClick={handleExport}
+                  className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                >
+                  <Download className="h-4 w-4" /> Export to Excel
+                </button>
                         
-                        <label className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 cursor-pointer">
-                            <Upload className="h-4 w-4" /> Import from Excel
-                            <input type="file" accept=".xlsx" onChange={handleImport} className="hidden" />
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 className="text-lg font-medium text-gray-900">Blood Bank Directory</h3>
-                    <p className="mt-1 text-sm text-gray-500">View or download the manually curated list of blood banks.</p>
-                     <div className="mt-4">
-                        <button
-                            onClick={() => setIsBankModalOpen(true)}
-                            className="inline-flex items-center gap-2 rounded-md bg-primary-green px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-dark-green"
-                        >
-                            View Directory
-                        </button>
-                    </div>
-                </div>
+                <label className="inline-flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 cursor-pointer">
+                  <Upload className="h-4 w-4" /> Import from Excel
+                  <input type="file" accept=".xlsx" onChange={handleImport} className="hidden" />
+                </label>
+              </div>
             </div>
+
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">Blood Bank Directory</h3>
+              <p className="mt-1 text-sm text-gray-500">View or download the manually curated list of blood banks.</p>
+               <div className="mt-4">
+                <button
+                  onClick={() => setIsBankModalOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-md bg-primary-green px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-dark-green"
+                >
+                  View Directory
+                </button>
+              </div>
+            </div>
+
+            {/* Sentiment Analysis Section */}
+            <div className="mt-8">
+              <h3 className="text-lg font-medium text-gray-900">Donor Feedback Sentiment Analysis</h3>
+              <p className="mt-1 text-sm text-gray-500">Paste donor feedback below to analyze satisfaction and issues.</p>
+              <textarea
+              value={feedbackText}
+              onChange={e => setFeedbackText(e.target.value)}
+              rows={3}
+              className="mt-2 w-full rounded border-gray-300 p-2"
+              placeholder="Paste donor feedback here..."
+              />
+              <button
+              onClick={async () => {
+                if (!feedbackText.trim()) return toast.error('Enter feedback text');
+                try {
+                const res = await api.post('/sentiment-analysis', { text: feedbackText });
+                setSentimentResult(res.data);
+                toast.success('Sentiment analyzed!');
+                } catch (err) {
+                toast.error('Failed to analyze sentiment');
+                }
+              }}
+              className="mt-2 px-4 py-2 bg-primary-green text-white rounded-md"
+              >Analyze Sentiment</button>
+              {sentimentResult && (
+              <div className="mt-2 text-sm">
+                <strong>Sentiment:</strong> {sentimentResult.sentiment}<br/>
+                <strong>Score:</strong> {sentimentResult.score}
+              </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
 

@@ -6,7 +6,11 @@ const donorRoutes = require('./donorRoutes');
 const patientRoutes = require('./patientRoutes');
 const matchRoutes = require('./matchRoutes');
 const excelRoutes = require('./excelRoutes');
+
 const emergencyRequestRoutes = require('./emergencyRequestRoutes');
+const ocrRoutes = require('./ocrRoutes');
+const sentimentRoutes = require('./sentimentRoutes');
+
 
 router.use(authRoutes);
 router.use(donorRoutes);
@@ -14,6 +18,8 @@ router.use(patientRoutes);
 router.use(matchRoutes);
 router.use(excelRoutes);
 router.use(emergencyRequestRoutes);
+router.use(ocrRoutes);
+router.use(sentimentRoutes);
 
 router.get('/health', (req, res) => {
   res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });

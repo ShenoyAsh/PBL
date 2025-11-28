@@ -1,3 +1,21 @@
+const { geminiRequest } = require('../utils/geminiHelper');
+/**
+ * Classify emergency text for urgency using Gemini
+ * Returns: { urgency }
+ */
+const classifyEmergencyText = async (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ message: 'No text provided' });
+  try {
+    const prompt = `Classify the urgency of this emergency case. Reply with a JSON object: { urgency: Critical/High/Medium/Low }.\n${text}`;
+    const aiResponse = await geminiRequest(prompt);
+    let result = { urgency: 'Medium' };
+    try { result = JSON.parse(aiResponse); } catch {}
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Gemini text classification failed' });
+  }
+};
 // server/controllers/emergencyRequestController.js
 
 const EmergencyRequest = require('../models/EmergencyRequest');
@@ -159,9 +177,28 @@ const expireRequest = async (req, res) => {
 };
 
 
+/**
+ * Detect fake emergency requests using Gemini
+ * Returns: { isFake, reasons }
+ */
+const detectFakeRequest = async (req, res) => {
+  const { text, phone } = req.body;
+  try {
+    const prompt = `Detect if this emergency request is fake. Reply with a JSON object: { isFake: true/false, reasons: [..] }.\nText: ${text}\nPhone: ${phone}`;
+    const aiResponse = await geminiRequest(prompt);
+    let result = { isFake: false, reasons: [] };
+    try { result = JSON.parse(aiResponse); } catch {}
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Gemini fake request detection failed' });
+  }
+};
+
 module.exports = {
   createRequest,
   getRequests,
   fulfillRequest,
   expireRequest,
+  detectFakeRequest,
+  classifyEmergencyText,
 };

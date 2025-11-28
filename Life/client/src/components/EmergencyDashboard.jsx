@@ -3,6 +3,13 @@ import { toast } from 'react-toastify';
 import { createAdminApi } from '../services/api';
 import { Loader2 } from 'lucide-react';
 
+// Google Maps Embed Helper
+function getGoogleMapsUrl(lat, lng, destName) {
+  const base = 'https://www.google.com/maps/dir/?api=1';
+  return `${base}&destination=${encodeURIComponent(destName)}&destination_place_id=&travelmode=driving&waypoints=${lat},${lng}`;
+}
+
+
 export default function EmergencyDashboard() {
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -142,6 +149,17 @@ export default function EmergencyDashboard() {
                   <p className="text-sm text-gray-500">{req.requiredBloodType} • {req.urgency} • {req.status}</p>
                   <p className="mt-2 text-sm">{req.location?.name}</p>
                   <p className="mt-1 text-xs text-gray-400">Posted: {new Date(req.timePosted).toLocaleString()}</p>
+                  {/* Google Maps Routing */}
+                  {req.location?.lat && req.location?.lng && (
+                    <a
+                      href={getGoogleMapsUrl(req.location.lat, req.location.lng, req.location.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-block text-blue-600 underline text-sm"
+                    >
+                      Show Route to Blood Bank
+                    </a>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2">
                   {req.status === 'Pending' && (

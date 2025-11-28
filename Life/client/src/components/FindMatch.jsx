@@ -11,6 +11,10 @@ export default function FindMatch() {
   const [matches, setMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAlertLoading, setIsAlertLoading] = useState(null); // stores donorId
+  // Smart search states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
   // Fetch patients on mount
   useEffect(() => {
@@ -27,6 +31,19 @@ export default function FindMatch() {
     };
     fetchPatients();
   }, []);
+
+  // Auto-suggest for blood types and donor names
+  useEffect(() => {
+    if (!searchTerm) {
+      setSuggestions([]);
+      return;
+    }
+    // Suggest blood types
+    const bloodTypeSuggestions = bloodTypes.filter(type => type.toLowerCase().includes(searchTerm.toLowerCase()));
+    // Suggest donor names from matches
+    const donorSuggestions = matches.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase())).map(d => d.name);
+    setSuggestions([...bloodTypeSuggestions, ...donorSuggestions]);
+  }, [searchTerm, matches]);
 
   const handleFindMatch = async (e) => {
     e.preventDefault();
@@ -71,9 +88,9 @@ export default function FindMatch() {
     <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-gray-900">Find a Match</h1>
       
-      {/* Search Form */}
+      {/* Search Form with Smart Search & Auto-Suggest */}
       <form onSubmit={handleFindMatch} className="mt-8 rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-900/5">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-4">
           <div>
             <label htmlFor="patient" className="block text-sm font-medium text-gray-700">Select Patient</label>
             <select
@@ -101,6 +118,27 @@ export default function FindMatch() {
               onChange={(e) => setRadiusKm(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-green focus:ring-primary-green"
             />
+          </div>
+          <div>
+            <label htmlFor="smartsearch" className="block text-sm font-medium text-gray-700">Smart Search</label>
+            <input
+              type="text"
+              id="smartsearch"
+              name="smartsearch"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              placeholder="Type blood group or donor name..."
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-green focus:ring-primary-green"
+              autoComplete="off"
+            />
+            {/* Auto-suggest dropdown */}
+            {suggestions.length > 0 && (
+              <ul className="mt-1 bg-white border border-gray-200 rounded shadow-lg z-10 absolute w-64">
+                {suggestions.map((s, idx) => (
+                  <li key={idx} className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => setSearchTerm(s)}>{s}</li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className="sm:pt-6">
             <button

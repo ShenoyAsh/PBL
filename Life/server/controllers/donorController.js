@@ -39,7 +39,30 @@ const manualVerifyDonor = async (req, res) => {
     }
 }
 
+const { geminiRequest } = require('../utils/geminiHelper');
+/**
+ * Calculate risk score for a donor using Gemini
+ * Returns: { riskScore, riskLevel }
+ */
+const getDonorRiskScore = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const donor = await Donor.findById(id);
+    if (!donor) {
+      return res.status(404).json({ message: 'Donor not found' });
+    }
+    const prompt = `Assign a risk score (0-100) and risk level (High Risk, Moderate, Fit to Donate) for this donor. Reply with a JSON object: { riskScore, riskLevel }.\nDonor: ${JSON.stringify(donor)}`;
+    const aiResponse = await geminiRequest(prompt);
+    let result = { riskScore: 100, riskLevel: 'Fit to Donate' };
+    try { result = JSON.parse(aiResponse); } catch {}
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Gemini risk scoring failed' });
+  }
+};
+
 module.exports = {
   getDonors,
-  manualVerifyDonor
+  manualVerifyDonor,
+  getDonorRiskScore
 };
