@@ -39,12 +39,12 @@ const Login = () => {
       <>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-100 via-white to-red-200 relative overflow-hidden">
           {/* Animated blood donation background */}
-          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Blood Donation" className="absolute inset-0 w-full h-full object-cover opacity-30 animate-bg-fade" style={{zIndex:0}} />
+          <img src="./login.png" alt="Blood Donation" className="absolute inset-0 w-full h-full object-cover opacity-30 animate-bg-fade" style={{zIndex:0}} />
           <style>{`
             @keyframes bg-fade {
-              0% { opacity: 0.2; }
-              50% { opacity: 0.35; }
-              100% { opacity: 0.2; }
+              0% { opacity: 100; }
+              50% { opacity: 100; }
+              100% { opacity: 100; }
             }
             .animate-bg-fade {
               animation: bg-fade 8s infinite alternate;

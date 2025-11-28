@@ -42,7 +42,7 @@ const cardVariants = {
 
 export default function FeatureCards() {
   return (
-    <div className="py-24 sm:py-32 bg-white/50">
+    <div className="py-24 sm:py-32 bg-red-10">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div 
           className="grid grid-cols-1 gap-8 md:grid-cols-3"

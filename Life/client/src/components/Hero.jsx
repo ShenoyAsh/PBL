@@ -7,9 +7,9 @@ export default function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 -z-10 h-full w-full">
         <img 
-          src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2070" 
+          src="https://www.ajhospital.in/storage/files/news/Blog/drive-download-20210608T141955Z-001/Feature.png" 
           alt="Medical Team" 
-          className="h-full w-full object-cover object-center opacity-10"
+          className="h-full w-full object-cover object-center opacity-100"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/50 to-white"></div>
       </div>

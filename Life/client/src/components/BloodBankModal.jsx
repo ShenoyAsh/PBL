@@ -26,7 +26,7 @@ export default function BloodBankModal({ isOpen, onClose }) {
           const data = rows.slice(1).map(row => {
             const values = row.split(',');
             return headers.reduce((obj, header, i) => {
-              obj[header.trim()] = values[i].trim();
+              obj[header.trim()] = values[i]?.trim() || '';
               return obj;
             }, {});
           });
