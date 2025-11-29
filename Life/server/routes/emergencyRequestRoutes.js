@@ -7,6 +7,7 @@ const {
 } = require('../controllers/emergencyRequestController');
 
 const { authorizeSheetWrite } = require('../utils/boltlayer'); // admin API key middleware
+const { auth, admin } = require('../middleware/auth');
 
 const router = express.Router();
 

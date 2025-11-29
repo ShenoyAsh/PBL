@@ -4,7 +4,7 @@ const router = express.Router();
 
 // @route   GET /api/donors
 // @desc    Get list of all donors
-router.get('/donors', getDonors);
+router.get('/', getDonors);
 
 // @route   GET /api/donor/:id/risk-score
 // @desc    Get risk score for a donor
