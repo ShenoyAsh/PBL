@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
   return (
@@ -45,18 +46,18 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <a
-              href="/register-donor"
+            <Link
+              to="/register-donor"
               className="rounded-full bg-primary-green px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-green-200 transition-all hover:scale-105 hover:bg-dark-green hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
             >
               Become a Donor
-            </a>
-            <a
-              href="/find-match"
+            </Link>
+            <Link
+              to="/find-match"
               className="text-base font-semibold leading-6 text-gray-900 transition-colors hover:text-primary-green flex items-center gap-2"
             >
               Find a Match <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
       </div>
