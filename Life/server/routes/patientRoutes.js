@@ -2,9 +2,9 @@ const express = require('express');
 const { registerPatient, getPatients } = require('../controllers/patientController');
 const router = express.Router();
 
-// @route   POST /api/register-patient
-// @desc    Register a new patient and sync to Excel+Mongo
-router.post('/register-patient', registerPatient);
+// @route   POST /api/patients/register  <-- Simplified path
+// @desc    Register a new patient
+router.post('/register', registerPatient);
 
 // @route   GET /api/patients
 // @desc    Get list of all patients

@@ -107,7 +107,7 @@ export default function EmergencyRequestForm() {
     setIsLoading(true);
     try {
       // 1) Create patient
-      const patientRes = await api.post('/register-patient', {
+      const patientRes = await api.post('/patients/register-patient', {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

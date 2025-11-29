@@ -6,7 +6,7 @@ import axios from 'axios';
 const NotificationContext = createContext();
 
 // Socket.IO connection
-const SOCKET_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const SOCKET_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 let socket;
 
 export const NotificationProvider = ({ children }) => {
