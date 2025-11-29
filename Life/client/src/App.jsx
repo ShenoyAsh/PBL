@@ -21,7 +21,7 @@ import RegisterDonor from './components/RegisterDonor';
 import AdminDashboard from './components/AdminDashboard';
 import HospitalDashboard from './components/HospitalDashboard';
 import FindMatch from './components/FindMatch';
-import EmergencyRequestForm from './components/EmergencyRequestForm';
+import EmergencyRequestForm from './components/RegisterPatient'; 
 import EmergencyDashboard from './components/EmergencyDashboard';
 import ChatBot from './components/ChatBot';
 
