@@ -91,7 +91,7 @@ export default function EmergencyDashboard() {
         className="relative flex flex-col items-center justify-center mb-8 rounded-xl shadow-lg w-full max-w-2xl overflow-hidden hero-bg"
         style={{ minHeight: '260px' }}
       >
-        <div className="absolute inset-0 w-full h-full bg-cover bg-center animate-bg-zoom" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80)', zIndex: 0 }} />
+        <div className="absolute inset-0 w-full h-full bg-cover bg-center animate-bg-zoom" style={{ backgroundImage: 'url(https://northcentralsurgical.com/wp-content/uploads/2025/06/Transforming-Lives-The-Powerful-Impact-of-Donating-Blood--2000x1000.jpeg)', zIndex: 0 }} />
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
           <h1 className="text-4xl font-bold text-red-600 mb-2 animate-fade-in">Emergency Requests</h1>
           <p className="text-lg text-gray-600 animate-fade-in">Track and manage urgent blood requests in real time.</p>
