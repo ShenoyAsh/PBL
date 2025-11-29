@@ -6,18 +6,21 @@ const donorRoutes = require('./donorRoutes');
 const patientRoutes = require('./patientRoutes');
 const matchRoutes = require('./matchRoutes');
 const excelRoutes = require('./excelRoutes');
-
+const notificationRoutes = require('./notificationRoutes');
 const emergencyRequestRoutes = require('./emergencyRequestRoutes');
 const ocrRoutes = require('./ocrRoutes');
 const sentimentRoutes = require('./sentimentRoutes');
-const chatRoutes = require('./chatRoutes'); // Import chat routes
+const chatRoutes = require('./chatRoutes');
 
-
+// Authentication routes
 router.use(authRoutes);
-router.use(donorRoutes);
-router.use(patientRoutes);
-router.use(matchRoutes);
-router.use(excelRoutes);
+
+// Protected routes (require authentication)
+router.use('/donors', donorRoutes);
+router.use('/patients', patientRoutes);
+router.use('/matches', matchRoutes);
+router.use('/excel', excelRoutes);
+router.use('/notifications', notificationRoutes);
 router.use(emergencyRequestRoutes);
 router.use(ocrRoutes);
 router.use(sentimentRoutes);

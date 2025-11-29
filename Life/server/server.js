@@ -1,17 +1,75 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
+const socketio = require('socket.io');
 
 const allRoutes = require('./routes');
 const { connectDB } = require('./utils/db');
+const { createNotification } = require('./controllers/notificationController');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 // --- Initialization ---
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
+
+// Store connected users
+const users = new Map();
+
+// Socket.IO connection handler
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  // Add user to the map when they connect
+  socket.on('register', (userId) => {
+    users.set(userId, socket.id);
+    console.log(`User ${userId} connected with socket ${socket.id}`);
+  });
+
+  // Remove user from the map when they disconnect
+  socket.on('disconnect', () => {
+    for (const [userId, socketId] of users.entries()) {
+      if (socketId === socket.id) {
+        users.delete(userId);
+        console.log(`User ${userId} disconnected`);
+        break;
+      }
+    }
+  });
+
+  // Handle notification read events
+  socket.on('notification:read', async (notificationId) => {
+    // You can add additional validation here if needed
+    socket.emit('notification:read', notificationId);
+  });
+});
+
+// Make io accessible to routes
+app.set('io', io);
+
+// Function to send real-time notification
+const sendNotification = (userId, notification) => {
+  const socketId = users.get(userId.toString());
+  if (socketId) {
+    io.to(socketId).emit('notification', notification);
+  }
+};
+
+// Make sendNotification available globally
+app.set('sendNotification', sendNotification);
+
 connectDB();
 
 // --- Data Directory Check ---
@@ -25,6 +83,7 @@ if (!fs.existsSync(dataDir)) {
 // --- Core Middleware ---
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
 }));
 app.use(helmet());
 app.use(express.json());
@@ -51,7 +110,7 @@ app.use((err, req, res, next) => {
 });
 
 // --- Start Server ---
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`🚀 LifeLink Server running on http://localhost:${PORT}`);
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

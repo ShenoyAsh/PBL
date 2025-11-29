@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import PrivateRoute from './components/auth/PrivateRoute';
-import { Bell, Trash2 } from 'lucide-react';
+import NotificationBell from './components/notifications/NotificationBell';
 
 // Auth Components
 import Login from './components/auth/Login';
@@ -42,130 +43,100 @@ function HomePage() {
 }
 
 function App() {
+  // State to track if intro video has finished
+  const [introComplete, setIntroComplete] = useState(false);
+  
   const [showChatBot, setShowChatBot] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([]);
 
-  // Initialize mock notifications
-  useEffect(() => {
-    setNotifications([
-      { id: 1, message: "Urgent: A+ Blood needed at City Hospital", time: "10m ago", read: false },
-      { id: 2, message: "Your donation request was approved.", time: "1h ago", read: false },
-      { id: 3, message: "New donor registered in your area.", time: "2h ago", read: true },
-      { id: 4, message: "Reminder: Blood drive tomorrow at 9 AM.", time: "1d ago", read: true }
-    ]);
-  }, []);
+  // --- INTRO VIDEO LOGIC ---
+  if (!introComplete) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center h-screen w-screen overflow-hidden">
+        <video
+          src="/intro.mp4" // Ensure 'intro.mp4' is in your 'public' folder
+          autoPlay
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          onEnded={() => setIntroComplete(true)} // Opens app when video ends
+        >
+          Your browser does not support the video tag.
+        </video>
+        
+        {/* Skip Button (Optional) */}
+        <button
+          onClick={() => setIntroComplete(true)}
+          className="absolute bottom-10 right-10 px-6 py-2 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-full hover:bg-white/20 transition-all text-sm font-medium"
+        >
+          Skip Intro
+        </button>
+      </div>
+    );
+  }
 
-  const clearNotifications = () => {
-    setNotifications([]);
-    setShowNotifications(false);
-  };
-
+  // --- MAIN APP ---
   return (
     <AuthProvider>
-      <div className="App min-h-screen font-sans text-gray-800 relative">
-        <Header />
-        <main>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+      <NotificationProvider>
+        <div className="App min-h-screen font-sans text-gray-800 relative animate-fade-in">
+          <Header />
+          <main>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            {/* Password Reset Route */}
-            <Route path="/reset-password" element={<ResetPassword />} />
+              {/* Password Reset Route */}
+              <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Protected Routes */}
-            <Route element={<PrivateRoute />}>
-              {/* New Dashboard Structure */}
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<Navigate to="overview" replace />} />
-                <Route path="overview" element={<Overview />} />
-                <Route path="emergency-requests" element={<EmergencyRequests />} />
-                <Route path="find-donors" element={<FindDonors />} />
-                <Route path="create-request" element={<CreateRequest />} />
-                <Route path="blood-bank" element={<BloodBank />} />
+              {/* Protected Routes */}
+              <Route element={<PrivateRoute />}>
+                {/* New Dashboard Structure */}
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<Navigate to="overview" replace />} />
+                  <Route path="overview" element={<Overview />} />
+                  <Route path="emergency-requests" element={<EmergencyRequests />} />
+                  <Route path="find-donors" element={<FindDonors />} />
+                  <Route path="create-request" element={<CreateRequest />} />
+                  <Route path="blood-bank" element={<BloodBank />} />
+                </Route>
+
+                {/* Legacy Routes */}
+                <Route path="/register-donor" element={<RegisterDonor />} />
+                <Route path="/emergency-request" element={<EmergencyRequestForm />} />
+                <Route path="/find-match" element={<FindMatch />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/emergency-dashboard" element={<EmergencyDashboard />} />
+                <Route path="/admin/hospital-dashboard" element={<HospitalDashboard />} />
               </Route>
 
-              {/* Legacy Routes */}
-              <Route path="/register-donor" element={<RegisterDonor />} />
-              <Route path="/emergency-request" element={<EmergencyRequestForm />} />
-              <Route path="/find-match" element={<FindMatch />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/emergency-dashboard" element={<EmergencyDashboard />} />
-              <Route path="/admin/hospital-dashboard" element={<HospitalDashboard />} />
-            </Route>
+              {/* Catch all other routes */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+          <Footer />
 
-            {/* Catch all other routes */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-        <Footer />
-
-        {/* Floating ChatBot Button */}
-        <button
-          onClick={() => setShowChatBot((v) => !v)}
-          className="fixed bottom-8 right-8 z-50 rounded-full bg-primary-green p-4 shadow-lg hover:bg-dark-green transition-transform hover:scale-105"
-          aria-label="Open ChatBot"
-        >
-          <span className="font-bold text-white text-xl">💬</span>
-        </button>
-        {showChatBot && (
-          <div className="fixed bottom-24 right-8 z-50 w-96 max-w-full animate-fade-in-up">
-            <ChatBot />
-          </div>
-        )}
-
-        {/* Notification Bell */}
-        <div className="fixed top-24 right-8 z-50">
-            <button
-            onClick={() => setShowNotifications((v) => !v)}
-            className="rounded-full bg-white p-3 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all relative"
-            aria-label="Notifications"
-            >
-            <Bell className="h-6 w-6 text-primary-green" />
-            {notifications.length > 0 && (
-                <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white animate-pulse">
-                {notifications.length}
-                </span>
-            )}
-            </button>
-
-            {/* Notifications Dropdown */}
-            {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden animate-fade-in">
-                <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                  <h3 className="text-sm font-semibold text-gray-700">Notifications</h3>
-                  {notifications.length > 0 && (
-                      <button 
-                        onClick={clearNotifications}
-                        className="text-xs text-gray-500 hover:text-red-500 flex items-center gap-1"
-                      >
-                        <Trash2 size={12} /> Clear
-                      </button>
-                  )}
-                </div>
-                
-                <ul className="max-h-64 overflow-y-auto">
-                {notifications.length > 0 ? (
-                    notifications.map((notif) => (
-                    <li key={notif.id} className="px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                        <p className={`text-sm ${notif.read ? 'text-gray-600' : 'text-gray-800 font-medium'}`}>
-                        {notif.message}
-                        </p>
-                        <span className="text-xs text-gray-400 mt-1 block">{notif.time}</span>
-                    </li>
-                    ))
-                ) : (
-                    <li className="px-4 py-8 text-center text-sm text-gray-500">
-                    No new notifications
-                    </li>
-                )}
-                </ul>
+          {/* Floating ChatBot Button */}
+          <button
+            onClick={() => setShowChatBot((v) => !v)}
+            className="fixed bottom-8 right-8 z-50 rounded-full bg-primary-green p-4 shadow-lg hover:bg-dark-green transition-transform hover:scale-105"
+            aria-label="Open ChatBot"
+          >
+            <span className="font-bold text-white text-xl">💬</span>
+          </button>
+          {showChatBot && (
+            <div className="fixed bottom-24 right-8 z-50 w-96 max-w-full animate-fade-in-up">
+              <ChatBot />
             </div>
-            )}
+          )}
+
+          {/* Notification Bell */}
+          <div className="fixed top-24 right-8 z-50">
+            <NotificationBell />
+          </div>
         </div>
-      </div>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
