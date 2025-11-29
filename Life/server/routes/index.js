@@ -18,7 +18,7 @@ router.use(authRoutes);
 // Protected routes (require authentication)
 router.use('/donors', donorRoutes);
 router.use('/patients', patientRoutes);
-router.use('/matches', matchRoutes);
+router.use('/', matchRoutes);
 router.use('/excel', excelRoutes);
 router.use('/notifications', notificationRoutes);
 router.use(emergencyRequestRoutes);

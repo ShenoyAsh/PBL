@@ -8,6 +8,6 @@ router.post('/register', registerPatient);
 
 // @route   GET /api/patients
 // @desc    Get list of all patients
-router.get('/patients', getPatients);
+router.get('/', getPatients);
 
 module.exports = router;
