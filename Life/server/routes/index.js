@@ -19,7 +19,7 @@ router.use(authRoutes);
 router.use('/donors', donorRoutes);
 router.use('/patients', patientRoutes);
 router.use('/', matchRoutes);
-router.use('/excel', excelRoutes);
+router.use('/', excelRoutes);
 router.use('/notifications', notificationRoutes);
 router.use(emergencyRequestRoutes);
 router.use(ocrRoutes);
